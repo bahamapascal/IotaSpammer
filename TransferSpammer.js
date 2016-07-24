@@ -9,7 +9,7 @@ function sendRequest(requestData, callback) {
 
  
 
-requestify.post("http://localhost:14265", requestData, {"timeout": 12000000})
+requestify.post("http://localhost:14265", "|" + JSON.stringify(requestData) + "|", {"timeout": 12000000})
    .then(function(response) {
      var data = response.getBody();
 
