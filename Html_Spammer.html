@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spamer V5 for 1.0.1</title>
+<script type="text/javascript">
+ 
+ 
+ var preeseed = "SPAMMERONE";
+ var seed = preeseed.toUpperCase() + "99999999999999999999999999999999999999999999999999999999999999999999999999999999"
+ var address = "RH9JINAYPFDDZPJBR9AQFMNYMBAQAOV9THCODHPNKCQYPFODXBFIEXIORYHT9ANJVIEBVCSBQTLXQFHMP9SUUTTLIY";
+ 
+
+ 
+ 
+function sendRequest(requestData, callback) {
+	var url = "http://localhost:14265";
+	log( "Sending an request to " + url + " with data "+ JSON.stringify(requestData) );
+	var request = new XMLHttpRequest();
+	request.open("POST", url);
+	request.onreadystatechange = function() {
+		if (this.readyState == 4) {
+			var json = JSON.parse(this.responseText);
+			if (json.exception) {
+				log(json.exception),
+				setTimeout(function () {
+			callback(json);
+			}, 60000);
+			
+			} else if (json.error) {
+				log(json.error),
+				setTimeout(function () {
+			callback(json);
+			}, 60000);
+			} else {
+				callback(json);
+			}
+		}
+	};
+	request.send("|" + requestData + "|");
+}
+
+Date.prototype.Format = function(fmt)   
+{ //author: meizz   
+  var o = {   
+    "M+" : this.getMonth()+1,                  
+    "d+" : this.getDate(),                   
+    "h+" : this.getHours(),                    
+    "m+" : this.getMinutes(),                
+    "s+" : this.getSeconds(),                
+    "q+" : Math.floor((this.getMonth()+3)/3),  
+    "S"  : this.getMilliseconds()              
+  };   
+  if(/(y+)/.test(fmt))   
+    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));   
+  for(var k in o)   
+    if(new RegExp("("+ k +")").test(fmt))   
+  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+  return fmt;   
+}  
+function log(text){
+	var dom = document.getElementById("logs");
+	dom.innerHTML = "["+new Date().Format("yyyy-MM-dd hh:mm:ss.S")+"] " + text + "<br/>\n" + dom.innerHTML;
+}
+var counter = 0;
+var start = new Date().getTime();
+function doSpamming() {
+	log( "Starting to make a tx..." );
+	
+	sendRequest(
+				"{'command': 'transfer', 'seed': '" + seed + "', 'securityLevel': 1, 'address': '" + address + "', 'value': '0', 'message': '', 'minWeightMagnitude': 13}", 
+				
+				
+				
+			function(json){
+			
+            if (json.tail != null) {
+            counter++;
+			log("The transfer has been broadcast via " + json.neighbors + " neighbors.");
+			log( "Total tx made : " + counter );
+
+			doSpamming();
+            } else {
+            log("Ups, something whent wrong. Most likely the Tangle is not solid. Will retry in 60 seconds!");
+			setTimeout(function () {
+			doSpamming();
+			}, 60000);
+            }
+            
+			
+			
+		}
+	);
+}
+</script>
+<style>
+body{
+	white-space:nowrap; 
+}
+</style>
+</head>
+<body onload="doSpamming()">
+<div id="logs"></div>
+</body>
+</html>
