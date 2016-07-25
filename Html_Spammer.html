@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Spamer V5 for 1.0.1</title>
+<title>Spammer for 1.0.1</title>
 <script type="text/javascript">
  
  
- var preeseed = "SPAMMERONE";
- var seed = preeseed.toUpperCase() + "99999999999999999999999999999999999999999999999999999999999999999999999999999999"
+ 
+ var seed = "SPAMMERONE99999999999999999999999999999999999999999999999999999999999999999999999999999999";
  var address = "RH9JINAYPFDDZPJBR9AQFMNYMBAQAOV9THCODHPNKCQYPFODXBFIEXIORYHT9ANJVIEBVCSBQTLXQFHMP9SUUTTLIY";
  
 
@@ -22,16 +22,14 @@ function sendRequest(requestData, callback) {
 		if (this.readyState == 4) {
 			var json = JSON.parse(this.responseText);
 			if (json.exception) {
-				log(json.exception),
-				setTimeout(function () {
-			callback(json);
-			}, 60000);
+				log(json.exception), setTimeout(function () {
+					callback(json);
+					}, 60000);
 			
 			} else if (json.error) {
-				log(json.error),
-				setTimeout(function () {
-			callback(json);
-			}, 60000);
+				log(json.error), setTimeout(function () {
+					callback(json);
+					}, 60000);
 			} else {
 				callback(json);
 			}
@@ -69,23 +67,22 @@ function doSpamming() {
 	
 	sendRequest(
 				"{'command': 'transfer', 'seed': '" + seed + "', 'securityLevel': 1, 'address': '" + address + "', 'value': '0', 'message': '', 'minWeightMagnitude': 13}", 
+							
 				
-				
-				
-			function(json){
+				function(json){
 			
-            if (json.tail != null) {
-            counter++;
-			log("The transfer has been broadcast via " + json.neighbors + " neighbors.");
-			log( "Total tx made : " + counter );
-
-			doSpamming();
-            } else {
-            log("Ups, something whent wrong. Most likely the Tangle is not solid. Will retry in 60 seconds!");
-			setTimeout(function () {
-			doSpamming();
-			}, 60000);
-            }
+				if (json.tail != null) {
+					counter++;
+					log("The transfer has been broadcast via " + json.neighbors + " neighbors.");
+					log( "Total tx made : " + counter );
+					doSpamming();
+			
+				} else {
+						log("Ups, something whent wrong. Most likely the Tangle is not solid. Will retry in 60 seconds!");
+						setTimeout(function () {
+						doSpamming();
+						}, 60000);
+				}
             
 			
 			
