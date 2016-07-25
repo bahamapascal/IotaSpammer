@@ -1,4 +1,6 @@
 
+//This code has some bug and is not usable at the moment.
+
 var requestify = require("requestify"); 
 var counter    = 0;
 
